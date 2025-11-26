@@ -1,0 +1,19 @@
+All communication between separate applications should take place using sockets. You will need multiple
+sockets to make this program work. You will be required to demonstrate your program working with two
+separate slaves, one of type A and one of type B, and two separate clients.
+
+In addition, you are going to need multiple threads in the applications. The master will require at least
+one thread for each program with which it communicates. But remember that a thread that blocks waiting
+for, for example, a job from the client, cannot simultaneously send a message to a client that a job has
+completed. So to truly make your program robust you will probably want a separate thread for every
+direction in which a message can be sent (i.e. a master thread that writes to a client, a separate master
+thread that reads from the client, etc.). All communication between threads will use shared memory
+objects with appropriate locking as discussed in the class lectures.
+
+All steps should be displayed to the console so that it is possible to observe the system working correctly
+by looking at the messages in each window. This includes the client receiving a job from the user, the
+client submitting a job to the master, the master receiving a job from the client, the master assigning a
+job to the slave, the slave receiving a job from the master, the slave completing a job, the slave informing
+the master that the job is complete, the master receiving a message from the slave that the job is
+complete, the master informing the client that the job is complete, and the client informing the user that
+the job is complete.
