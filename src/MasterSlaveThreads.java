@@ -41,12 +41,15 @@ public class MasterSlaveThreads implements Runnable{
 
              PrintWriter slaveResponseWriter = new PrintWriter(slaveSocket.getOutputStream(), true);
              BufferedReader slaveRequestReader = new BufferedReader(new InputStreamReader(slaveSocket.getInputStream()))) {
+            
+            // Log when a slave connects
+            System.out.println("Master: Slave connected on thread " + this.threadId + " (" + this.threadName + ")");
+            
             String requestString;
-
-
             while((requestString = slaveRequestReader.readLine()) != null) {
-                System.out.println(requestString + " received by listener: " + this.threadId + " " + this.threadName);
-                slaveResponseWriter.println();
+                System.out.println("Master: Received from slave [" + this.threadName + "]: " + requestString);
+                // Acknowledge receipt of message
+                slaveResponseWriter.println("ACK:" + requestString);
             }
 
         } catch (IOException e) {
