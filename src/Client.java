@@ -33,10 +33,26 @@ public class Client {
                                 new InputStreamReader(System.in))
         ) {
             String userInputSendToServer;
-            while ((userInputSendToServer = userInput.readLine()) != null) {
-                writeToServer.println(userInputSendToServer);
-                System.out.println("echo: " + readFromServer.readLine());
+
+            while (!(userInputSendToServer = userInput.readLine()).equals("exit") ) {  // This is where we'll ask the Client for a Job ID, and a Job type
+
+                writeToServer.println(userInputSendToServer);                 // of type A or (exclusive or) B.
+                System.out.println("Master Responded: " + readFromServer.readLine());  //  This line is the initial "welcome" message from Master.
+                //
+                System.out.println("Master Asks: " + readFromServer.readLine());
+                writeToServer.println(userInput.readLine());
+
+                System.out.println("Master Asks: " + readFromServer.readLine());
+                writeToServer.println(userInput.readLine());
+
+                System.out.println("Master Responded " + readFromServer.readLine());
+
             }
+
+            if (userInputSendToServer.equals("exit")) {
+                writeToServer.println(userInputSendToServer);
+            }
+
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host " + hostName);
             System.exit(1);
