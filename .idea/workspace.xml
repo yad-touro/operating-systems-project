@@ -4,18 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c4846534-b741-48bd-9604-76e3358edad6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/miscellaneousDetails" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Client.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Master.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/MasterClientThreads.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/MasterSlaveThreads.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/SlaveA.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/SlaveB.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Client.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Master.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Slave.java" beforeDir="false" />
-    </list>
+    <list default="true" id="c4846534-b741-48bd-9604-76e3358edad6" name="Changes" comment="Added a Job Class&#10;Edited some code of the communication between Master and Client(s).&#10;Added an ArrayList which Client(s) and Master share&#10;Added a while-loop (commented out) in Master" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -42,9 +31,10 @@
         </map>
       </branch-storage>
     </favorite-branches>
+    <option name="PREVIEW_PUSH_PROTECTED_ONLY" value="true" />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="main" />
+        <entry key="$PROJECT_DIR$" value="newBranch_YRoss" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -70,28 +60,50 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Client.executor": "Debug",
-    "Application.Master.executor": "Debug",
-    "Application.SlaveA.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "newBranch__YRoss",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Ross/IdeaProjects/MCOO243",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Client.executor&quot;: &quot;Debug&quot;,
+    &quot;Application.Master.executor&quot;: &quot;Debug&quot;,
+    &quot;Application.SlaveA.executor&quot;: &quot;Debug&quot;,
+    &quot;Application.SlaveB.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;basicClientMasterSlaveProtocols&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Ross/IdeaProjects/MCOO243_SemesterProject&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Ross\IdeaProjects\MCOO243_SemesterProject\src" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.SlaveB">
     <configuration name="Client" type="Application" factoryName="Application" singleton="false" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Client" />
+      <module name="MCOO243_SemesterProject" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Master" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Master" />
+      <module name="MCOO243_SemesterProject" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SlaveA" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="SlaveA" />
+      <module name="MCOO243_SemesterProject" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SlaveB" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="SlaveB" />
       <module name="MCOO243_SemesterProject" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -114,6 +126,10 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.SlaveB" />
+        <item itemvalue="Application.SlaveA" />
+        <item itemvalue="Application.Client" />
+        <item itemvalue="Application.Master" />
         <item itemvalue="Application.Client" />
       </list>
     </recent_temporary>
@@ -127,6 +143,39 @@
       <option name="presentableId" value="Default" />
       <updated>1763927685193</updated>
     </task>
+    <task id="LOCAL-00001" summary="Performed a big part of the boiler plate when it comes to server and sockets. We must speak about threading and the many algorithms that are needed and can be used.">
+      <option name="closed" value="true" />
+      <created>1764135049541</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1764135049541</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Performed a big part of the boiler plate when it comes to server and sockets. We must speak about threading and the many algorithms that are needed and can be used.">
+      <option name="closed" value="true" />
+      <created>1764135065488</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1764135065488</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Performed a big part of the boiler plate when it comes to server and sockets. We must speak about threading and the many algorithms that are needed and can be used.">
+      <option name="closed" value="true" />
+      <created>1764135134306</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1764135134306</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Added a Job Class&#10;Edited some code of the communication between Master and Client(s).&#10;Added an ArrayList which Client(s) and Master share&#10;Added a while-loop (commented out) in Master">
+      <option name="closed" value="true" />
+      <created>1765949312660</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1765949312660</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -152,6 +201,11 @@
       </map>
     </option>
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Performed a big part of the boiler plate when it comes to server and sockets. We must speak about threading and the many algorithms that are needed and can be used." />
+    <MESSAGE value="Added a Job Class&#10;Edited some code of the communication between Master and Client(s).&#10;Added an ArrayList which Client(s) and Master share&#10;Added a while-loop (commented out) in Master" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added a Job Class&#10;Edited some code of the communication between Master and Client(s).&#10;Added an ArrayList which Client(s) and Master share&#10;Added a while-loop (commented out) in Master" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
@@ -167,7 +221,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/Master.java</url>
-          <line>82</line>
+          <line>90</line>
           <option name="timeStamp" value="15" />
         </line-breakpoint>
       </breakpoints>

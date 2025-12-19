@@ -15,22 +15,28 @@ import java.util.ArrayList;
     between itself, and the Clients and the Slaves.
  */
 
-public class Master extends Thread{
+public class Master {
 
     // needs some Global variables to keep track of which thread should be prioritized
     // and taken care of. Must discuss what variables exactly.
 
     int favoredClientThread;
     int favoredSlaveThread;
-    ArrayList<Thread> listOfAllThreads;  // to keep track of all threads currently running, this is a hypothesis
+    ArrayList<Thread> listOfAllThreads;// to keep track of all threads currently running, this is a hypothesis
+
 
     // We must look into the need for booleans akin to "wantsToEnter"
     // It probably depends on which Mutual Exclusion Algorithm we want to implement (Dekker, Peterson, Lamport).
 
     public static void main(String[] args) {
 
+        ArrayList<Job> listOfJobs = new ArrayList<>(); // Uncompleted Jobs waiting to be dispatched to a Slave
+        ArrayList<Job> listOfCompletedJobs = new ArrayList<>(); // Jobs that have been completed by a Slave
+        ArrayList<Job> listOfJobsGivenToSlave1 = new ArrayList<>(12);
+        ArrayList<Job> listOfJobsGivenToSlave2 = new ArrayList<>(12);
+
         // Hardcode port number if necessary
-        args = new String[] { "30121" , "30122"};
+        args = new String[] { "30121" , "30122" };
 
         if (args.length != 2) {
             System.err.println("Usage: java EchoServer <port number>");
@@ -53,7 +59,9 @@ public class Master extends Thread{
 
             // creation of threads to connect itself and Clients.
             for (int i = 0; i < MAX_CLIENT_THREADS; i++) {
-                listOfClientThreads.add(new Thread(new MasterClientThreads(serverClientSocket, i, "Client Thread " + i)));
+                listOfClientThreads.add(new Thread(new MasterClientThreads(serverClientSocket, i,
+                                                                 "Client Thread " + i,
+                                                                            listOfJobs)));
             }
 
             // creation of threads to connect itself and Slaves
@@ -81,6 +89,39 @@ public class Master extends Thread{
             for (Thread t : listOfSlaveThreads) {
                 t.start();
             }
+
+
+//            while (!listOfClientThreads.isEmpty()) {
+//                if (listOfJobs.getFirst().getJobType().equals("A") && !SlaveAIsFull()) {
+//                    // send to SlaveA
+//                    listOfJobsGivenToSlave1.add(new Job(listOfJobs.getFirst().getJobID(),
+//                                                        listOfJobs.getFirst().getJobType(),
+//                                                         listOfJobs.getFirst().getClientNumber()));
+//                    listOfJobs.removeFirst();
+//                } else if (listOfJobs.getFirst().getJobType().equals("B") && !SlaveBIsFull()) {
+//                    // send to SlaveB
+//                    listOfJobsGivenToSlave2.add(new Job(listOfJobs.getFirst().getJobID(),
+//                                                        listOfJobs.getFirst().getJobType(),
+//                                                        listOfJobs.getFirst().getClientNumber()));;
+//                    listOfJobs.removeFirst();
+//
+//                } else if (listOfJobs.getFirst().getJobType().equals("B") && !SlaveAIsFull()) {
+//                    // send to SlaveA a Job with type B
+//                    listOfJobsGivenToSlave1.add(new Job(listOfJobs.getFirst().getJobID(),
+//                                                        listOfJobs.getFirst().getJobType(),
+//                                                        listOfJobs.getFirst().getClientNumber()));;
+//                    listOfJobs.removeFirst();
+//
+//                } else if  (listOfJobs.getFirst().getJobType().equals("A") && !SlaveBIsFull()) {
+//                    // send to SlaveB a Job with type A
+//                    listOfJobsGivenToSlave2.add(new Job(listOfJobs.getFirst().getJobID(),
+//                                                        listOfJobs.getFirst().getJobType(),
+//                                                        listOfJobs.getFirst().getClientNumber()));;
+//                    listOfJobs.removeFirst();
+//
+//                }
+//            }
+
 
             // Mutual Exclusion needs to be placed here.
 
