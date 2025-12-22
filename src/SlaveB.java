@@ -66,18 +66,66 @@ public class SlaveB extends Thread{
         int portNumber = Integer.parseInt(args[1]);
 
         try (
-                Socket slaveASocket = new Socket(hostName, portNumber);
+                Socket slaveBSocket = new Socket(hostName, portNumber);
                 PrintWriter writeToServer = // stream to write text requests to server
-                        new PrintWriter(slaveASocket.getOutputStream(), true);
+                        new PrintWriter(slaveBSocket.getOutputStream(), true);
                 BufferedReader readFromServer = // stream to read text response from server
                         new BufferedReader(
-                                new InputStreamReader(slaveASocket.getInputStream()));
+                                new InputStreamReader(slaveBSocket.getInputStream()));
 
         ) {
-            String serverInputSendToSlave;
-            while ((serverInputSendToSlave = readFromServer.readLine()) != null) {
-                writeToServer.println(serverInputSendToSlave);
-                System.out.println("echo: " + readFromServer.readLine());
+            // Send identification to master
+            System.out.println("Slave-B: Connected to Master on port " + portNumber);
+            writeToServer.println("SLAVE_TYPE:B");
+            System.out.println("Slave-B: Identifying as type B");
+            
+            String jobMessage;
+            while ((jobMessage = readFromServer.readLine()) != null) {
+                // Skip ACK messages
+                if (jobMessage.startsWith("ACK:")) {
+                    continue;
+                }
+                
+                // Parse job message format: "A:123" or "B:456"
+                String[] parts = jobMessage.split(":");
+                if (parts.length == 2) {
+                    String jobType = parts[0].trim();
+                    String jobId = parts[1].trim();
+                    
+                    System.out.println("Slave-B: Received job Type=" + jobType + ", ID=" + jobId);
+                    
+                    // Process the job
+                    int sleepTime;
+                    if (jobType.equalsIgnoreCase("B")) {
+                        // Optimal job for Slave-B: 2 seconds
+                        sleepTime = 2000;
+                        System.out.println("Slave-B: Processing optimal job (Type B) for " + (sleepTime/1000) + " seconds...");
+                    } else if (jobType.equalsIgnoreCase("A")) {
+                        // Non-optimal job for Slave-B: 10 seconds
+                        sleepTime = 10000;
+                        System.out.println("Slave-B: Processing non-optimal job (Type A) for " + (sleepTime/1000) + " seconds...");
+                    } else {
+                        System.out.println("Slave-B: Unknown job type: " + jobType);
+                        writeToServer.println("ERROR:Unknown job type");
+                        continue;
+                    }
+                    
+                    // Simulate work by sleeping
+                    try {
+                        Thread.sleep(sleepTime);
+                    } catch (InterruptedException e) {
+                        System.err.println("Slave-B: Sleep interrupted");
+                    }
+                    
+                    // Send completion message back to master
+                    String completionMessage = "COMPLETE:" + jobType + ":" + jobId;
+                    writeToServer.println(completionMessage);
+                    System.out.println("Slave-B: Completed job Type=" + jobType + ", ID=" + jobId);
+                    System.out.println("Slave-B: Sending completion message to Master");
+                } else {
+                    System.out.println("Slave-B: Invalid job message format: " + jobMessage);
+                    writeToServer.println("ERROR:Invalid format");
+                }
             }
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host " + hostName);

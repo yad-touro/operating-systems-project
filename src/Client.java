@@ -5,6 +5,7 @@
 
 import java.net.*;
 import java.io.*;
+import java.util.concurrent.*;
 
 public class Client {
     public static void main(String[] args) {
@@ -32,25 +33,84 @@ public class Client {
                         new BufferedReader(
                                 new InputStreamReader(System.in))
         ) {
-            String userInputSendToServer;
+            System.out.println("Client: Connected to Master");
+            
+            // Message queue to safely pass messages between threads
+            BlockingQueue<String> messageQueue = new LinkedBlockingQueue<>();
+            
+            // Create a separate thread to continuously read from server
+            Thread messageReader = new Thread(() -> {
+                try {
+                    String message;
+                    while ((message = readFromServer.readLine()) != null) {
+                        if (message.startsWith("JOB_COMPLETE:")) {
+                            // Handle completion notification immediately
+                            String[] parts = message.split(":");
+                            if (parts.length == 3) {
+                                String jobType = parts[1];
+                                String jobId = parts[2];
+                                System.out.println("Client: Master notified that job " + jobType + ":" + jobId + " is complete");
+                                System.out.println("Client: Job " + jobType + ":" + jobId + " completed successfully");
+                            }
+                        } else {
+                            // Put regular messages in queue for main thread
+                            messageQueue.put(message);
+                        }
+                    }
+                } catch (IOException | InterruptedException e) {
+                    // Connection closed or error
+                }
+            });
+            messageReader.setDaemon(true);
+            messageReader.start();
 
-            while (!(userInputSendToServer = userInput.readLine()).equals("exit") ) {  // This is where we'll ask the Client for a Job ID, and a Job type
+            while (true) {
+                try {
+                    // Read welcome message from Master (from queue)
+                    String message = messageQueue.take();
+                    System.out.println("Master: " + message);
+                    
+                    // Read Job ID prompt (from queue)
+                    message = messageQueue.take();
+                    System.out.println("Master: " + message);
+                    String jobId = userInput.readLine();
+                    if (jobId != null && jobId.equals("exit")) {
+                        writeToServer.println(jobId);
+                        break;
+                    }
+                    System.out.println("Client: Sending Job ID: " + jobId + " to Master");
+                    writeToServer.println(jobId);
 
-                writeToServer.println(userInputSendToServer);                 // of type A or (exclusive or) B.
-                System.out.println("Master Responded: " + readFromServer.readLine());  //  This line is the initial "welcome" message from Master.
-                //
-                System.out.println("Master Asks: " + readFromServer.readLine());
-                writeToServer.println(userInput.readLine());
+                    // Read Job Type prompt (from queue)
+                    message = messageQueue.take();
+                    System.out.println("Master: " + message);
+                    String jobType = userInput.readLine();
+                    if (jobType != null && jobType.equals("exit")) {
+                        writeToServer.println(jobType);
+                        break;
+                    }
+                    System.out.println("Client: Sending Job Type: " + jobType + " to Master");
+                    writeToServer.println(jobType);
 
-                System.out.println("Master Asks: " + readFromServer.readLine());
-                writeToServer.println(userInput.readLine());
-
-                System.out.println("Master Responded " + readFromServer.readLine());
-
-            }
-
-            if (userInputSendToServer.equals("exit")) {
-                writeToServer.println(userInputSendToServer);
+                    // Read dispatch confirmation (from queue)
+                    message = messageQueue.take();
+                    System.out.println("Master: " + message);
+                } catch (InterruptedException e) {
+                    System.out.println("Client: Interrupted while waiting for message");
+                    break;
+                }
+                
+                // Ask user if they want to submit another job
+                System.out.println("Client: Press Enter to submit another job, or type 'exit' to quit");
+                String continueChoice = userInput.readLine();
+                if (continueChoice != null && continueChoice.equals("exit")) {
+                    writeToServer.println("exit");
+                    System.out.println("Client: Exiting...");
+                    break;
+                } else {
+                    // Send "continue" to signal we want another job
+                    writeToServer.println("continue");
+                }
             }
 
         } catch (UnknownHostException e) {

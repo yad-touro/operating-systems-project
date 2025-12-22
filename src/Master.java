@@ -34,6 +34,7 @@ public class Master {
         ArrayList<Job> listOfCompletedJobs = new ArrayList<>(); // Jobs that have been completed by a Slave
         ArrayList<Job> listOfJobsGivenToSlave1 = new ArrayList<>(12);
         ArrayList<Job> listOfJobsGivenToSlave2 = new ArrayList<>(12);
+        ArrayList<PrintWriter> clientWriters = new ArrayList<>(); // Store client PrintWriters for notifications
 
         // Hardcode port number if necessary
         args = new String[] { "30121" , "30122" };
@@ -61,12 +62,15 @@ public class Master {
             for (int i = 0; i < MAX_CLIENT_THREADS; i++) {
                 listOfClientThreads.add(new Thread(new MasterClientThreads(serverClientSocket, i,
                                                                  "Client Thread " + i,
-                                                                            listOfJobs)));
+                                                                            listOfJobs, clientWriters)));
             }
 
             // creation of threads to connect itself and Slaves
             for (int i = 0; i < MAX_SLAVE_THREADS; i++) {
-                listOfSlaveThreads.add(new Thread(new MasterSlaveThreads(serverSlaveSocket, i, "Slave Thread " + i)));
+                listOfSlaveThreads.add(new Thread(new MasterSlaveThreads(serverSlaveSocket, i, "Slave Thread " + i,
+                                                                          listOfCompletedJobs,
+                                                                          listOfJobsGivenToSlave1, listOfJobsGivenToSlave2,
+                                                                          clientWriters)));
             }
 
             /*
@@ -90,6 +94,114 @@ public class Master {
                 t.start();
             }
 
+            // Job Dispatcher Thread - sends jobs from listOfJobs to slaves
+            Thread dispatcherThread = new Thread(() -> {
+                System.out.println("Master: Job dispatcher started");
+                while (true) {
+                    try {
+                        synchronized (listOfJobs) {
+                            if (!listOfJobs.isEmpty()) {
+                                Job job = listOfJobs.get(0);
+                                String jobType = job.getJobType();
+                                
+                                // Simple load balancing: check which slave should get the job
+                                int slave1Load = listOfJobsGivenToSlave1.size();
+                                int slave2Load = listOfJobsGivenToSlave2.size();
+                                
+                                // Determine which slave to assign to
+                                int targetSlave = -1;
+                                String slaveName = "";
+                                
+                                if (jobType.equals("A")) {
+                                    // Job type A - prefer Slave-A (thread 0) if available
+                                    if (MasterSlaveThreads.slaveTypes[0] != null && 
+                                        MasterSlaveThreads.slaveTypes[0].equals("A")) {
+                                        // Check if Slave-A is less busy, or if Slave-B is much busier
+                                        if (slave1Load <= slave2Load || slave2Load - slave1Load > 2) {
+                                            targetSlave = 0;
+                                            slaveName = "Slave-A";
+                                        } else if (MasterSlaveThreads.slaveTypes[1] != null) {
+                                            targetSlave = 1;
+                                            slaveName = "Slave-B";
+                                        }
+                                    } else if (MasterSlaveThreads.slaveTypes[1] != null && 
+                                               MasterSlaveThreads.slaveTypes[1].equals("A")) {
+                                        targetSlave = 1;
+                                        slaveName = "Slave-A";
+                                    } else if (MasterSlaveThreads.slaveTypes[0] != null) {
+                                        targetSlave = 0;
+                                        slaveName = "Slave-B";
+                                    }
+                                } else if (jobType.equals("B")) {
+                                    // Job type B - prefer Slave-B (thread 1) if available
+                                    if (MasterSlaveThreads.slaveTypes[1] != null && 
+                                        MasterSlaveThreads.slaveTypes[1].equals("B")) {
+                                        if (slave2Load <= slave1Load || slave1Load - slave2Load > 2) {
+                                            targetSlave = 1;
+                                            slaveName = "Slave-B";
+                                        } else if (MasterSlaveThreads.slaveTypes[0] != null) {
+                                            targetSlave = 0;
+                                            slaveName = "Slave-A";
+                                        }
+                                    } else if (MasterSlaveThreads.slaveTypes[0] != null && 
+                                               MasterSlaveThreads.slaveTypes[0].equals("B")) {
+                                        targetSlave = 0;
+                                        slaveName = "Slave-B";
+                                    } else if (MasterSlaveThreads.slaveTypes[1] != null) {
+                                        targetSlave = 1;
+                                        slaveName = "Slave-A";
+                                    }
+                                } else {
+                                    // Invalid job type - assign to any available slave as fallback
+                                    System.out.println("Master: Warning - Invalid job type '" + jobType + "', assigning to first available slave");
+                                    if (MasterSlaveThreads.slaveTypes[0] != null && MasterSlaveThreads.slaveWriters[0] != null) {
+                                        targetSlave = 0;
+                                        slaveName = "Slave-" + MasterSlaveThreads.slaveTypes[0];
+                                    } else if (MasterSlaveThreads.slaveTypes[1] != null && MasterSlaveThreads.slaveWriters[1] != null) {
+                                        targetSlave = 1;
+                                        slaveName = "Slave-" + MasterSlaveThreads.slaveTypes[1];
+                                    }
+                                }
+                                
+                                // Send job to selected slave
+                                if (targetSlave >= 0 && MasterSlaveThreads.slaveWriters[targetSlave] != null) {
+                                    PrintWriter slaveWriter = MasterSlaveThreads.slaveWriters[targetSlave];
+                                    String jobMessage = job.getJobType() + ":" + job.getJobID();
+                                    
+                                    System.out.println("Master: Load balancing - Slave-A has " + slave1Load + 
+                                                     " jobs, Slave-B has " + slave2Load + " jobs");
+                                    System.out.println("Master: Assigning job Type " + jobType + ", ID " + 
+                                                     job.getJobID() + " to " + slaveName);
+                                    
+                                    slaveWriter.println(jobMessage);
+                                    System.out.println("Master: Sent job " + jobMessage + " to " + slaveName);
+                                    
+                                    // Move job from queue to slave's job list
+                                    listOfJobs.remove(0);
+                                    if (targetSlave == 0) {
+                                        synchronized (listOfJobsGivenToSlave1) {
+                                            listOfJobsGivenToSlave1.add(job);
+                                        }
+                                    } else {
+                                        synchronized (listOfJobsGivenToSlave2) {
+                                            listOfJobsGivenToSlave2.add(job);
+                                        }
+                                    }
+                                } else {
+                                    // No slave available yet - job stays in queue
+                                    System.out.println("Master: No slave available for job " + jobType + ":" + job.getJobID() + " - waiting...");
+                                }
+                            }
+                        }
+                        Thread.sleep(100); // Check every 100ms
+                    } catch (InterruptedException e) {
+                        System.out.println("Master: Dispatcher thread interrupted");
+                        break;
+                    }
+                }
+            });
+            
+            dispatcherThread.start();
 
 //            while (!listOfClientThreads.isEmpty()) {
 //                if (listOfJobs.getFirst().getJobType().equals("A") && !SlaveAIsFull()) {
@@ -142,6 +254,13 @@ public class Master {
                 } catch (InterruptedException e){
                     e.printStackTrace();
                 }
+            }
+            
+            // Join dispatcher thread
+            try {
+                dispatcherThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
 
             // joining threads so that they will be more or less in parallel
