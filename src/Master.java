@@ -9,125 +9,114 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
-/*
-    Note that Master needs to implement some form of Mutual Exclusion.
-    This is because it needs to manage incoming/outgoing "messages" (or whatever you want to call the interaction)
-    between itself, and the Clients and the Slaves.
- */
 
-public class Master {
+public class Master extends Thread {
 
-    // needs some Global variables to keep track of which thread should be prioritized
-    // and taken care of. Must discuss what variables exactly.
-
-    int favoredClientThread;
-    int favoredSlaveThread;
-    ArrayList<Thread> listOfAllThreads;// to keep track of all threads currently running, this is a hypothesis
-
-
-    // We must look into the need for booleans akin to "wantsToEnter"
-    // It probably depends on which Mutual Exclusion Algorithm we want to implement (Dekker, Peterson, Lamport).
 
     public static void main(String[] args) {
 
         ArrayList<Job> listOfJobs = new ArrayList<>(); // Uncompleted Jobs waiting to be dispatched to a Slave
         ArrayList<Job> listOfCompletedJobs = new ArrayList<>(); // Jobs that have been completed by a Slave
-        ArrayList<Job> listOfJobsGivenToSlave1 = new ArrayList<>(12);
-        ArrayList<Job> listOfJobsGivenToSlave2 = new ArrayList<>(12);
 
         // Hardcode port number if necessary
-        args = new String[] { "30121" , "30122" };
+        args = new String[] { "30121" , "30122", "30123", "30124" };
 
-        if (args.length != 2) {
+        if (args.length != 4) {
             System.err.println("Usage: java EchoServer <port number>");
             System.exit(1);
         }
 
-        int clientPortNumber = Integer.parseInt(args[0]);
-        int slavePortNumber = Integer.parseInt(args[1]);
+        int clientOutgoingPortNumber = Integer.parseInt(args[0]);
+        int slaveOutgoingPortNumber = Integer.parseInt(args[1]);
+        int slaveIncomingPortNumber = Integer.parseInt(args[2]);
+        int clientIncomingPortNumber = Integer.parseInt(args[3]);
 
         // this will allow the total amount of threads or clients to connect
-        final int MAX_CLIENT_THREADS = 4;  // threads will be numbered 0 -> MAX_THREADS, for now it's 4, but if you want, you can change for more.
+        final int MAX_CLIENT_THREADS = 4;  // threads will be numbered 0 -> MAX_THREADS - 1, for now it's 4, but if you want, you can change for more.
         final int MAX_SLAVE_THREADS = 2;
 
-        try (ServerSocket serverClientSocket = new ServerSocket(clientPortNumber);
-             ServerSocket serverSlaveSocket = new ServerSocket(slavePortNumber)) {
+        try (ServerSocket serverClientMasterSocket = new ServerSocket(clientOutgoingPortNumber);
+             ServerSocket serverMasterClientSocket = new ServerSocket(clientIncomingPortNumber);
+             ServerSocket serverSlaveOutgoingSocket = new ServerSocket(slaveOutgoingPortNumber);
+             ServerSocket serverSlaveIncomingSocket = new ServerSocket(slaveIncomingPortNumber)
+        ) {
 
             // an ArrayList to keep track of all threads
-            ArrayList<Thread> listOfClientThreads = new ArrayList<Thread>();
-            ArrayList<Thread> listOfSlaveThreads = new ArrayList<Thread>();
+            ArrayList<Thread> listOfClientToMasterThreads = new ArrayList<Thread>();
+//            ArrayList<MasterToClientThreads> listOfMasterToClientThreads = new ArrayList<>();
+            ArrayList<MasterToSlaveThreads> listOfMasterToSlaveThreads = new ArrayList<MasterToSlaveThreads>();
+            ArrayList<SlaveToMasterThreads> listOfSlaveToMasterThreads = new ArrayList<>();
 
-            // creation of threads to connect itself and Clients.
+            // creation of threads to connect Clients to Master. These Threads will be monitoring the data and
+            // requests coming from Clients and sending to Master (i.e. sends the uncompleted Jobs to Master to be
+            // delegated soon)
             for (int i = 0; i < MAX_CLIENT_THREADS; i++) {
-                listOfClientThreads.add(new Thread(new MasterClientThreads(serverClientSocket, i,
-                                                                 "Client Thread " + i,
-                                                                            listOfJobs)));
+                listOfClientToMasterThreads.add(new Thread(new ClientToMasterThreads(serverClientMasterSocket,
+                                                                                    i,
+                                                                        "Client Thread " + i,
+                                                                                    listOfJobs,
+                                                                                    listOfCompletedJobs)));
+//                listOfMasterToClientThreads.add(new MasterToClientThreads(serverMasterClientSocket,
+//                                                                            i,
+//                                                                "Client Thread " + i,
+//                                                                            listOfCompletedJobs));
             }
 
-            // creation of threads to connect itself and Slaves
+            // creation of threads to connect Master to Clients. These Threads will be monitoring the data
+            // to tell Clients that Jobs are complete.
+//            for (int i = 0; i < MAX_CLIENT_THREADS; i++) {
+//                listOfMasterToClientThreads.add(new MasterToClientThreads(serverMasterClientSocket,
+//                                                                          i,
+//                                                               "Client Thread " + 1,
+//                                                                          listOfCompletedJobs));
+//            }
+
+            // creation of threads to connect Master and Slaves. These Threads will be monitoring the data and
+            // requests coming from Master and sending to Slaves (i.e. when a job needs to be processed by a Slave)
             for (int i = 0; i < MAX_SLAVE_THREADS; i++) {
-                listOfSlaveThreads.add(new Thread(new MasterSlaveThreads(serverSlaveSocket, i, "Slave Thread " + i)));
+                listOfMasterToSlaveThreads.add(new MasterToSlaveThreads(serverSlaveOutgoingSocket,
+                                                                        i,
+                                                                "Slave Thread " + i,
+                                                                        listOfJobs));
+                listOfSlaveToMasterThreads.add(new SlaveToMasterThreads(serverSlaveIncomingSocket,
+                        i,
+                        "Slave Thread " + i,
+                        listOfCompletedJobs));
+
             }
 
-            /*
-                The Problem with the Above (current) Manner of Creating Threads:
-                    We are currently limited to the amount according to MAX_THREADS.
-                    Meaning, that we can open up to that many Clients, but if we add
-                    one more, the Master (server in this case) will not accept its
-                    input. We should look into how to create threads dynamically, which
-                    may require that Clients do not receive a dedicated thread, but
-                    rather they share the same pool of threads.
-             */
+            // creation of threads to connect Master and Slaves. These Threads will be monitoring the data and
+            // requests coming from Slaves and sending to Master (i.e. when a Job has been completed by a Slave)
+//            for (int i = 0; i < MAX_SLAVE_THREADS; i++) {
+//                listOfSlaveToMasterThreads.add(new SlaveToMasterThreads(serverSlaveIncomingSocket,
+//                                                                        i,
+//                                                             "Slave Thread " + i,
+//                                                                        listOfCompletedJobs));
+//            }
 
 
             // any "start()" calls need to be placed here
             // starting threads
-            for (Thread t : listOfClientThreads) {
-                t.start();
-            }
-
-            for (Thread t : listOfSlaveThreads) {
+            for (Thread t : listOfClientToMasterThreads) {
                 t.start();
             }
 
 
-//            while (!listOfClientThreads.isEmpty()) {
-//                if (listOfJobs.getFirst().getJobType().equals("A") && !SlaveAIsFull()) {
-//                    // send to SlaveA
-//                    listOfJobsGivenToSlave1.add(new Job(listOfJobs.getFirst().getJobID(),
-//                                                        listOfJobs.getFirst().getJobType(),
-//                                                         listOfJobs.getFirst().getClientNumber()));
-//                    listOfJobs.removeFirst();
-//                } else if (listOfJobs.getFirst().getJobType().equals("B") && !SlaveBIsFull()) {
-//                    // send to SlaveB
-//                    listOfJobsGivenToSlave2.add(new Job(listOfJobs.getFirst().getJobID(),
-//                                                        listOfJobs.getFirst().getJobType(),
-//                                                        listOfJobs.getFirst().getClientNumber()));;
-//                    listOfJobs.removeFirst();
-//
-//                } else if (listOfJobs.getFirst().getJobType().equals("B") && !SlaveAIsFull()) {
-//                    // send to SlaveA a Job with type B
-//                    listOfJobsGivenToSlave1.add(new Job(listOfJobs.getFirst().getJobID(),
-//                                                        listOfJobs.getFirst().getJobType(),
-//                                                        listOfJobs.getFirst().getClientNumber()));;
-//                    listOfJobs.removeFirst();
-//
-//                } else if  (listOfJobs.getFirst().getJobType().equals("A") && !SlaveBIsFull()) {
-//                    // send to SlaveB a Job with type A
-//                    listOfJobsGivenToSlave2.add(new Job(listOfJobs.getFirst().getJobID(),
-//                                                        listOfJobs.getFirst().getJobType(),
-//                                                        listOfJobs.getFirst().getClientNumber()));;
-//                    listOfJobs.removeFirst();
-//
-//                }
+            for (Thread t : listOfMasterToSlaveThreads) {
+                t.start();
+            }
+
+            for (Thread t : listOfSlaveToMasterThreads) {
+                t.start();
+            }
+
+//            for (Thread t : listOfMasterToClientThreads) {
+//                t.start();
 //            }
 
 
-            // Mutual Exclusion needs to be placed here.
-
-
             // any "join()" calls need to be placed here.
-            for (Thread t : listOfClientThreads) {
+            for (Thread t : listOfClientToMasterThreads) {
                 try {
                     t.join();
                 } catch (InterruptedException e){
@@ -136,7 +125,7 @@ public class Master {
             }
 
             // join
-            for (Thread t : listOfSlaveThreads) {
+            for (Thread t : listOfMasterToSlaveThreads) {
                 try {
                     t.join();
                 } catch (InterruptedException e){
@@ -144,12 +133,28 @@ public class Master {
                 }
             }
 
+            for (Thread t: listOfSlaveToMasterThreads) {
+                try {
+                    t.join();
+                } catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
+
+//            for (Thread t: listOfMasterToClientThreads) {
+//                try {
+//                    t.join();
+//                } catch (InterruptedException e){
+//                    e.printStackTrace();
+//                }
+//            }
+
             // joining threads so that they will be more or less in parallel
 
 
         } catch (IOException e) {
             System.out.println(
-                    "Exception caught when trying to listen on port " + clientPortNumber + " or listening for a connection");
+                    "Exception caught when trying to listen on port " + clientOutgoingPortNumber + " or listening for a connection");
             System.out.println(e.getMessage());
         }  // end catch
 

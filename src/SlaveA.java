@@ -39,7 +39,10 @@ public class SlaveA extends Thread{
      */
 
     // variables
-    ArrayList<Thread> listOfJobs;
+    static String slaveType = "A";
+    static final int MAX_JOBS = 6;// This will be used to check if the Slave is full or not
+    static ArrayList<Job> uncompletedJobs = new ArrayList<>();
+    static ArrayList<Job> completedJobs = new ArrayList<>();
 
     /*
         We may need to create a main method, as it seems that the Slaves must tell the Master
@@ -54,31 +57,87 @@ public class SlaveA extends Thread{
     public static void main(String[] args) {
 
         // Hardcode in IP and Port here if required
-        args = new String[] {"127.0.0.1", "30122"};
+        args = new String[] {"127.0.0.1", "30122", "30123"};
 
-        if (args.length != 2) {
+        if (args.length != 3) {
             System.err.println(
                     "Usage: java EchoClient <host name> <port number>");
             System.exit(1);
         }
 
         String hostName = args[0];
-        int portNumber = Integer.parseInt(args[1]);
+        int incomingPortNumber = Integer.parseInt(args[1]);
+        int outgoingPortNumber = Integer.parseInt(args[2]);
 
         try (
-                Socket slaveASocket = new Socket(hostName, portNumber);
-                PrintWriter writeToServer = // stream to write text requests to server
-                        new PrintWriter(slaveASocket.getOutputStream(), true);
-                BufferedReader readFromServer = // stream to read text response from server
-                        new BufferedReader(
-                                new InputStreamReader(slaveASocket.getInputStream()));
+                Socket slaveAIncomingSocket = new Socket(hostName, incomingPortNumber);
+                Socket slaveAOutgoingSocket = new Socket(hostName, outgoingPortNumber);
+
+                PrintWriter writeToMasterWhenReceivingNewJobs = // stream to write text requests to server
+                        new PrintWriter(slaveAIncomingSocket.getOutputStream(), true);
+                BufferedReader readFromMasterWhenReceivingNewJobs = // stream to read text response from server
+                        new BufferedReader(new InputStreamReader(slaveAIncomingSocket.getInputStream()));
+
+                PrintWriter writeToMasterWhenSendingCompletedJobs =
+                        new PrintWriter(slaveAOutgoingSocket.getOutputStream(), true);
+                BufferedReader readFromMasterWhenSendingCompletedJobs =
+                        new BufferedReader(new InputStreamReader(slaveAOutgoingSocket.getInputStream()));
 
         ) {
-            String serverInputSendToSlave;
-            while ((serverInputSendToSlave = readFromServer.readLine()) != null) {
-                writeToServer.println(serverInputSendToSlave);
-                System.out.println("echo: " + readFromServer.readLine());
+
+            System.out.println("Attempting to connect to Master");
+            writeToMasterWhenReceivingNewJobs.println(slaveType);
+            System.out.println(readFromMasterWhenReceivingNewJobs.readLine());
+
+
+            while (slaveAIncomingSocket != null) {
+
+                if (!completedJobs.isEmpty()) {
+                    System.out.println("***************");
+                    System.out.println("Notifying Master of Job completion.");
+                    writeToMasterWhenSendingCompletedJobs.println("Jobs are complete");
+                    System.out.println("Sending Job Details to Master");
+                    writeToMasterWhenSendingCompletedJobs.println(completedJobs.getFirst().getJobID());
+                    writeToMasterWhenSendingCompletedJobs.println(completedJobs.getFirst().getJobType());
+                    writeToMasterWhenSendingCompletedJobs.println(completedJobs.getFirst().getClientNumber());
+                    writeToMasterWhenSendingCompletedJobs.println(completedJobs.getFirst().getCompleted());
+                    System.out.println("Removing Job with ID: " + completedJobs.getFirst().getJobID());
+                    synchronized (completedJobs) {
+                        completedJobs.removeFirst();
+                    }
+                    System.out.println("***************");
+                }
+
+                System.out.println(readFromMasterWhenReceivingNewJobs.readLine());
+                writeToMasterWhenReceivingNewJobs.println(isFull());
+                System.out.println("Master Responded: " + readFromMasterWhenReceivingNewJobs.readLine());
+                String clientNumber = readFromMasterWhenReceivingNewJobs.readLine();
+                String jobId = readFromMasterWhenReceivingNewJobs.readLine();
+                String jobType = readFromMasterWhenReceivingNewJobs.readLine();
+                boolean jobStatus = Boolean.parseBoolean(readFromMasterWhenReceivingNewJobs.readLine());
+                synchronized (uncompletedJobs) {
+                    uncompletedJobs.add(new Job(jobId, jobType, Integer.parseInt(clientNumber), jobStatus));
+                }
+                System.out.println("Job " + jobId + " accepted and entered queue to be processed");
+
+
+
+                while (!uncompletedJobs.isEmpty()) {
+
+                    // simulate "work"
+                    doJob doJob = new doJob(uncompletedJobs.getFirst(), completedJobs);
+
+                    synchronized (uncompletedJobs) {
+                        uncompletedJobs.removeFirst();
+                    }
+                    doJob.start();
+
+                }
+
             }
+
+
+
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host " + hostName);
             System.exit(1);
@@ -91,21 +150,47 @@ public class SlaveA extends Thread{
     }  // end main
 
 
-        // pseudoCode
+    public static boolean isFull() {
+        return uncompletedJobs.size() == MAX_JOBS;
+    }
 
-            // needs code that will sort of behave similarly to a Client.
-            // But without allowing to take input from the console/terminal.
-            // And only accepts input from the Master.
+    private static class doJob extends Thread {
+        Job jobToPerform;
+        ArrayList<Job> completedJobs;
 
-            // needs a method to process job type A
-                // "sleep" for 2 seconds
-                // return, end of method, tell Master job is done
+        // constructor
+        public doJob(Job jobToPerform, ArrayList<Job> completedJobs) {
+            this.jobToPerform = jobToPerform;
+            this.completedJobs = completedJobs;
+        }
 
-            // needs a method to process Job type B
-                // "sleep" for 10 seconds
-                // return, end of method, tell Master job is done
+        @Override
+        public void run() {
+            if (jobToPerform.getJobType().equals("A")) {
+                System.out.println("Putting to sleep for 2 seconds");
+                try {
+                    this.sleep(2000);  // puts the Thread that calls sleep, well, asleep
+                    jobToPerform.setCompleted(true);
+                } catch (InterruptedException e) {  // and allows the other thread to execute
+                    throw new RuntimeException(e);
+                }
+            }
+            else if (jobToPerform.getJobType().equals("B")) {
+                System.out.println("Putting to sleep for 10 seconds");
+                try {
+                    this.sleep(10000);  // puts the Thread that calls sleep, well, asleep
+                    jobToPerform.setCompleted(true);
+                } catch (InterruptedException e) {  // and allows the other thread to execute
+                    throw new RuntimeException(e);
+                }
+            }
 
+            synchronized (completedJobs) {
+                System.out.println("Adding to Completed Job List.");
+                this.completedJobs.add(jobToPerform);  // once the is helper thread is done, add Job to a completed list.
+            }
 
-
+        }
+    }  // end of private class doJob
 
 }
