@@ -6,6 +6,25 @@
   <component name="ChangeListManager">
     <list default="true" id="c4846534-b741-48bd-9604-76e3358edad6" name="Changes" comment="Added Threads so that Slaves are able to take in new jobs and tell Master that jobs have been performed, silmutaneously. &#10;The only thing left to do is the final step of telling Clients that Jobs are done. This is quite difficult.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/Client.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/ClientToMasterThreads.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/Job.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/Job.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/Master.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/Master.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/MasterToSlaveThreads.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/MasterToSlaveThreads.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/SlaveA$doJob.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/SlaveA$doJob.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/SlaveA.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/SlaveA.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/SlaveB$doJob.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/SlaveB$doJob.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/SlaveB.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/SlaveB.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/SlaveToMasterThreads.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/SlaveToMasterThreads.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ClientToMasterThreads.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientMasterThreads.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Job.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Job.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Master.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Master.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MasterToClientThreads.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MasterToSlaveThreads.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MasterToSlaveThreads.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SlaveA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SlaveA.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SlaveB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SlaveB.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SlaveToMasterThreads.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SlaveToMasterThreads.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,21 +84,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Client.executor&quot;: &quot;Debug&quot;,
-    &quot;Application.Master.executor&quot;: &quot;Debug&quot;,
-    &quot;Application.SlaveA.executor&quot;: &quot;Debug&quot;,
-    &quot;Application.SlaveB.executor&quot;: &quot;Debug&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;basicClientMasterSlaveProtocols&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Ross/IdeaProjects/MCOO243_SemesterProject&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Client.executor": "Debug",
+    "Application.Master.executor": "Debug",
+    "Application.SlaveA.executor": "Debug",
+    "Application.SlaveB.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "basicClientMasterSlaveProtocols",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Ross/IdeaProjects/MCOO243_SemesterProject",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Ross\IdeaProjects\MCOO243_SemesterProject\src" />
@@ -204,7 +223,15 @@
       <option name="project" value="LOCAL" />
       <updated>1767030859659</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Added Threads so that Slaves are able to take in new jobs and tell Master that jobs have been performed, silmutaneously. &#10;The only thing left to do is the final step of telling Clients that Jobs are done. This is quite difficult.">
+      <option name="closed" value="true" />
+      <created>1767033412207</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1767033412207</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -241,12 +268,12 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/SlaveA.java</url>
-          <line>68</line>
+          <line>84</line>
           <option name="timeStamp" value="12" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/SlaveB.java</url>
-          <line>68</line>
+          <line>84</line>
           <option name="timeStamp" value="18" />
         </line-breakpoint>
       </breakpoints>

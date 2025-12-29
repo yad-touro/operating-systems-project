@@ -1,3 +1,18 @@
+/*
+    Peter (Yosef) Ross
+    Touro ID: T00563986
+
+    Paul (Shlomo) Ross
+    Touro ID: T00564089
+
+    Joseph Guindi
+    Touro ID: T00553821
+
+    Yehoshua Dusowitz
+    Touro ID:
+
+ */
+
 /**
  * Clients are going to connect directly to the master and submit jobs of either type (A or B). The client’s submission
  * should include the type, and an ID number that will be used to identify the job throughout the system.
@@ -17,18 +32,17 @@ public class Client {
 //        clientNum++;
 
         // Hardcode in IP and Port here if required
-        args = new String[] {"127.0.0.1", "30121", "30124"};
+        args = new String[] {"127.0.0.1", "30121"};
 
-        if (args.length != 3) {
+        if (args.length != 2) {
             System.err.println(
                     "Usage: java EchoClient <host name> <port number>");
             System.exit(1);
         }
 
-        boolean jobsHaveCompleted = false;
+        boolean masterHasCompletedJobsForClient = false;
         String hostName = args[0];
         int outgoingPortNumber = Integer.parseInt(args[1]);
-        int incomingPortNumber = Integer.parseInt(args[2]);
 
         try (
                 Socket outgoingClientSocket = new Socket(hostName, outgoingPortNumber);
@@ -42,11 +56,7 @@ public class Client {
                 BufferedReader userInput = // standard input stream to get user's requests
                         new BufferedReader(
                                 new InputStreamReader(System.in));
-//                PrintWriter incomingWriteToServer =
-//                        new PrintWriter(incomingClientSocket.getOutputStream(), true);
-//                BufferedReader incomingReadFromServer =
-//                        new BufferedReader(
-//                                new InputStreamReader(incomingClientSocket.getInputStream()));
+
         ) {
 
             System.out.println("Connecting to Master");
@@ -65,6 +75,13 @@ public class Client {
                 System.out.println("Master Responded " + outgoingReadFromServer.readLine());
                 System.out.println("Master Responded " + outgoingReadFromServer.readLine());
 
+                System.out.println("Asking Master if any of my Jobs have completed");
+                masterHasCompletedJobsForClient = Boolean.parseBoolean(outgoingReadFromServer.readLine());
+                while (masterHasCompletedJobsForClient) {
+                    System.out.println("Master responds: Job " + outgoingReadFromServer.readLine());
+                    masterHasCompletedJobsForClient = Boolean.parseBoolean(outgoingReadFromServer.readLine());
+                }
+                System.out.println("Master responds: No more completed Jobs for you");
 
 
             }

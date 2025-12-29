@@ -1,4 +1,19 @@
 /*
+    Peter (Yosef) Ross
+    Touro ID: T00563986
+
+    Paul (Shlomo) Ross
+    Touro ID: T00564089
+
+    Joseph Guindi
+    Touro ID: T00553821
+
+    Yehoshua Dusowitz
+    Touro ID:
+
+ */
+
+/*
     This class is used in order to send Jobs that have been processed/finished
     and that Slave will then inform Master of the completion of said Job. Due
     to the manner of how Sockets and Ports work, we are only able to keep track
@@ -58,7 +73,10 @@ public class SlaveToMasterThreads extends Thread {
         ) {
 
             while (slaveSocket != null) {
+
+                System.out.println("***************");
                 System.out.println("Checking if there are completed jobs");
+                System.out.println("***************");
 
                 if (readFromSlave.readLine().equals("Jobs are complete")) {
                     System.out.println("Inputting Completed Job to list of Completed Jobs");
@@ -78,10 +96,17 @@ public class SlaveToMasterThreads extends Thread {
                     System.out.println("***************");
                 }
 
-//                for (Job j : completedJobs) {  // for debugging purposes
+//                // for debugging purposes
+//                for (Job j : completedJobs) {
 //                    System.out.println(j);
 //                }
 
+            }
+
+            try {
+                sleep(10);  // puts the Thread that calls sleep, well, asleep
+            } catch (InterruptedException e) {  // and allows the other thread to execute
+                throw new RuntimeException(e);
             }
 
         }

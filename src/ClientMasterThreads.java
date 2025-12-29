@@ -1,9 +1,28 @@
+/*
+    Peter (Yosef) Ross
+    Touro ID: T00563986
+
+    Paul (Shlomo) Ross
+    Touro ID: T00564089
+
+    Joseph Guindi
+    Touro ID: T00553821
+
+    Yehoshua Dusowitz
+    Touro ID:
+
+ */
+
 /**
  * The master will calculate, based on the current load, whether it is more efficient to assign the job to the
  * slave that is optimized to perform it, or the slave that is not optimized to perform it, and assign it. The
  * master does NOT need to perform this calculation based on the current progress of any job, it can assume
  * that any job that is in progress will require the full time to complete.
  */
+
+// As we see differently from the Master-Slave relationship, the Client-Master relationship requires only one thread
+// and keeps track of both incoming and outgoing data/information. This is because it is inherently not bad to block
+// client from typing new Jobs when we want to let them know of a completed Jobs.
 
 import java.io.*;
 import java.net.*;
@@ -14,7 +33,7 @@ import java.util.ArrayList;
  * Each thread will need an ID (0 --> n), name, and a ServerSocket reference.
  */
 
-public class ClientToMasterThreads extends Thread{
+public class ClientMasterThreads extends Thread{
 
     private ServerSocket serverSocket = null;
     private int threadId;
@@ -25,7 +44,7 @@ public class ClientToMasterThreads extends Thread{
     ArrayList<Job> completedJobs;
 
     // constructor
-    public ClientToMasterThreads(ServerSocket serverSocket, int id, String threadName, ArrayList<Job> jobList, ArrayList<Job> completedJobs) {
+    public ClientMasterThreads(ServerSocket serverSocket, int id, String threadName, ArrayList<Job> jobList, ArrayList<Job> completedJobs) {
         this.serverSocket = serverSocket;
         this.threadId = id;
         this.threadName = threadName;
@@ -34,13 +53,7 @@ public class ClientToMasterThreads extends Thread{
     }
 
     @Override
-    public void run() {  // NOTE: !!!MUST PUT EXPLANATION OF CODE EVENTUALLY!!!
-
-        /*
-            Also, we will need to start naming variables more accurately.
-            However, we need to see how the server and clients will respond
-            to each other.
-        */
+    public void run() {
 
         try (Socket clientSocket = serverSocket.accept();
              PrintWriter clientResponseWriter = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -57,13 +70,16 @@ public class ClientToMasterThreads extends Thread{
             // Since we're only handling type A and B, there is some input handling that will
             // let client know that they did not input valid types.
             do {
+
+                System.out.println("***************");
+
                 System.out.println("Asking " + threadName + " For Job ID...");
                 clientResponseWriter.println("Job ID: ");
                 currentJobID = clientRequestReader.readLine();
                 if (currentJobID.equals("exit")) break;
                 System.out.println(currentJobID + " received");
 
-                System.out.println("Asking " + threadName + "For Job Type...");
+                System.out.println("Asking " + threadName + " For Job Type...");
                 clientResponseWriter.println("Job Type (A or B): ");
                 currentJobType = clientRequestReader.readLine();
                 System.out.println(currentJobType + " received");
@@ -75,7 +91,7 @@ public class ClientToMasterThreads extends Thread{
 
                 else {
                     synchronized (jobList) {
-                        jobList.add(new Job(currentJobID, currentJobType, threadId, false));
+                        jobList.add(new Job(currentJobID, currentJobType, this.threadId, false));
                     }
 
                     System.out.println("JobId: " + jobList.getFirst().getJobID() + " JobType: " + jobList.getFirst().getJobType());
@@ -86,12 +102,54 @@ public class ClientToMasterThreads extends Thread{
                     clientResponseWriter.println("Dispatching Job... Enter \"exit\" to exit from Program");
                 }
 
-//                if (!completedJobs.isEmpty()) {
-//                    if (completedJobs.getFirst().getClientNumber() == threadId) {
-//                        clientResponseWriter.println("A Job has completed.");
-//                        clientResponseWriter.println(completedJobs.getFirst().getJobID() + "has completed.");
-//                    }
-//                }
+
+                System.out.println("completed jobs is empty: " + completedJobs.isEmpty());
+                if (!completedJobs.isEmpty()) {
+                    ArrayList<Object> temp = new ArrayList<>();
+                    for (int i = 0; i < completedJobs.size(); i++) {
+//                        System.out.println("***************");  // All commented code is used for debugging
+//                        System.out.println("Job Client Number: " + completedJobs.get(i).getClientNumber());
+//                        System.out.println("This thread number: " + this.threadId);
+//                        System.out.println("Boolean cond: " + (completedJobs.get(i).getClientNumber() == threadId));
+//                        System.out.println("***************");
+                        if (completedJobs.get(i).getClientNumber() == threadId) {
+                            clientResponseWriter.println("true");
+                            System.out.println("Notifying Client "
+                                                + threadId
+                                                + " that Job "
+                                                + completedJobs.get(i).getJobID()
+                                                + " has completed processing");
+                            clientResponseWriter.println(completedJobs.get(i).getJobID() + " has completed.");
+                            temp.add(completedJobs.get(i));
+                        }
+                    }
+
+                    for (Object o : temp) {
+                        completedJobs.remove(o);
+                    }
+
+
+                    System.out.println("Notifying Client "
+                            + threadId
+                            + " that no other Jobs have completed processing");
+                    clientResponseWriter.println("false");
+
+                    System.out.println("***************");
+
+                } else {
+                    System.out.println("Notifying Client "
+                            + threadId
+                            + " that no other Jobs have completed processing");
+                    clientResponseWriter.println("false");
+
+                }
+
+                try {
+                    sleep(10);  // puts the Thread that calls sleep, well, asleep
+                } catch (InterruptedException e) {  // and allows the other thread to execute
+                    throw new RuntimeException(e);
+                }
+
 
 
             } while(clientSocket != null);
