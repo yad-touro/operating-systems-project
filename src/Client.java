@@ -6,52 +6,70 @@
 import java.net.*;
 import java.io.*;
 
-public class Client {
-    public static void main(String[] args) {
-        
-        // Hardcode in IP and Port here if required
-        args = new String[] {"127.0.0.1", "30121"};
 
-        if (args.length != 2) {
+public class Client {
+
+    public static int clientNum = 0;
+
+    public static void main(String[] args) {
+
+//        String clientName = "Client " + clientNum;
+//        clientNum++;
+
+        // Hardcode in IP and Port here if required
+        args = new String[] {"127.0.0.1", "30121", "30124"};
+
+        if (args.length != 3) {
             System.err.println(
                     "Usage: java EchoClient <host name> <port number>");
             System.exit(1);
         }
 
+        boolean jobsHaveCompleted = false;
         String hostName = args[0];
-        int portNumber = Integer.parseInt(args[1]);
+        int outgoingPortNumber = Integer.parseInt(args[1]);
+        int incomingPortNumber = Integer.parseInt(args[2]);
 
         try (
-                Socket clientSocket = new Socket(hostName, portNumber);
-                PrintWriter writeToServer = // stream to write text requests to server
-                        new PrintWriter(clientSocket.getOutputStream(), true);
-                BufferedReader readFromServer = // stream to read text response from server
+                Socket outgoingClientSocket = new Socket(hostName, outgoingPortNumber);
+                //Socket incomingClientSocket = new Socket(hostName, incomingPortNumber);
+
+                PrintWriter outgoingWriteToServer = // stream to write text requests to server
+                        new PrintWriter(outgoingClientSocket.getOutputStream(), true);
+                BufferedReader outgoingReadFromServer = // stream to read text response from server
                         new BufferedReader(
-                                new InputStreamReader(clientSocket.getInputStream()));
+                                new InputStreamReader(outgoingClientSocket.getInputStream()));
                 BufferedReader userInput = // standard input stream to get user's requests
                         new BufferedReader(
-                                new InputStreamReader(System.in))
+                                new InputStreamReader(System.in));
+//                PrintWriter incomingWriteToServer =
+//                        new PrintWriter(incomingClientSocket.getOutputStream(), true);
+//                BufferedReader incomingReadFromServer =
+//                        new BufferedReader(
+//                                new InputStreamReader(incomingClientSocket.getInputStream()));
         ) {
-            String userInputSendToServer;
 
-            while (!(userInputSendToServer = userInput.readLine()).equals("exit") ) {  // This is where we'll ask the Client for a Job ID, and a Job type
+            System.out.println("Connecting to Master");
+            System.out.println("Master Responded: " + outgoingReadFromServer.readLine());  //  This line is the initial "welcome" message from Master.
 
-                writeToServer.println(userInputSendToServer);                 // of type A or (exclusive or) B.
-                System.out.println("Master Responded: " + readFromServer.readLine());  //  This line is the initial "welcome" message from Master.
+            while (outgoingClientSocket != null) {  // This is where we'll ask the Client for a Job ID, and a Job type
+
+
                 //
-                System.out.println("Master Asks: " + readFromServer.readLine());
-                writeToServer.println(userInput.readLine());
+                System.out.println("Master Asks: " + outgoingReadFromServer.readLine());
+                outgoingWriteToServer.println(userInput.readLine());
 
-                System.out.println("Master Asks: " + readFromServer.readLine());
-                writeToServer.println(userInput.readLine());
+                System.out.println("Master Asks: " + outgoingReadFromServer.readLine());
+                outgoingWriteToServer.println(userInput.readLine());
 
-                System.out.println("Master Responded " + readFromServer.readLine());
+                System.out.println("Master Responded " + outgoingReadFromServer.readLine());
+                System.out.println("Master Responded " + outgoingReadFromServer.readLine());
+
+
 
             }
 
-            if (userInputSendToServer.equals("exit")) {
-                writeToServer.println(userInputSendToServer);
-            }
+
 
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host " + hostName);

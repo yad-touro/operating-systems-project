@@ -1,14 +1,19 @@
 
-public class Job {
-    String jobID;
-    String jobType;
-    int clientNumber;
+// a Class that keeps track of a Job and it's data. Very important cause it helps
+// with keeping track of which Client requested a specific Job to be done.
 
-    public Job(String jobID, String jobType, int clientNumber) {
+public class Job {
+    private String jobID;
+    private String jobType;
+    private int clientNumber;
+    private boolean completed;
+
+    public Job(String jobID, String jobType, int clientNumber, boolean completed) {
 
         this.jobID = jobID;
         this.jobType = jobType;
         this.clientNumber = clientNumber;
+        this.completed = false;
 
     }
 
@@ -22,5 +27,13 @@ public class Job {
 
     public int getClientNumber() {
         return this.clientNumber;
+    }
+
+    public boolean getCompleted() {
+        return this.completed;
+    }
+
+    public void setCompleted(boolean bool) {
+        this.completed = bool;
     }
 }
