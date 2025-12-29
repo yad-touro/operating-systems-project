@@ -1,3 +1,18 @@
+/*
+    Peter (Yosef) Ross
+    Touro ID: T00563986
+
+    Paul (Shlomo) Ross
+    Touro ID: T00564089
+
+    Joseph Guindi
+    Touro ID: T00553821
+
+    Yehoshua Dusowitz
+    Touro ID:
+
+ */
+
 
 // a Class that keeps track of a Job and it's data. Very important cause it helps
 // with keeping track of which Client requested a specific Job to be done.

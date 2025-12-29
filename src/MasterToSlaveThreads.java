@@ -1,4 +1,19 @@
 /*
+    Peter (Yosef) Ross
+    Touro ID: T00563986
+
+    Paul (Shlomo) Ross
+    Touro ID: T00564089
+
+    Joseph Guindi
+    Touro ID: T00553821
+
+    Yehoshua Dusowitz
+    Touro ID:
+
+ */
+
+/*
     This class is used in order to send Jobs that are waiting to be processed from
     Master to a Slave. Due to the manner of how Sockets and Ports work, we are only
     able to keep track of one direction (either "incoming data" or "outgoing data")
@@ -94,16 +109,20 @@ public class MasterToSlaveThreads extends Thread{
                             System.out.println("***************");
                             System.out.println("Entered Synchronized block");
                             slaveResponseWriterWhenSendingNewJobs.println("Attempting Job Delegation");
+                            // Asking Slave if they are too full/too busy
                             slaveResponseWriterWhenSendingNewJobs.println("Are you full?");
+                            // Slave answers if they are full
                             slaveAisFull = Boolean.parseBoolean(slaveRequestReaderWhenSendingNewJobs.readLine());
                             System.out.println("Slave " + slaveType + " responded isFull: " + slaveAisFull);
                             if (!slaveAisFull) {
+                                // Delegating Jobs to Slave
                                 System.out.println("Delegating to Slave " + slaveType);
-                                //slaveResponseWriterWhenSendingNewJobs.println("Delegating task to you");
+                                // send over the values of clientNumber, jobId, jobType and jobStatus to Slave
                                 slaveResponseWriterWhenSendingNewJobs.println(uncompletedJobs.getFirst().getClientNumber());
                                 slaveResponseWriterWhenSendingNewJobs.println(uncompletedJobs.getFirst().getJobID());
                                 slaveResponseWriterWhenSendingNewJobs.println(uncompletedJobs.getFirst().getJobType());
                                 slaveResponseWriterWhenSendingNewJobs.println(uncompletedJobs.getFirst().getCompleted());
+                                // remove the above job from the uncompletedJobList
                                 uncompletedJobs.removeFirst();
                             }
                             else {
@@ -116,11 +135,15 @@ public class MasterToSlaveThreads extends Thread{
                         synchronized (uncompletedJobs) {
                             System.out.println("***************");
                             slaveResponseWriterWhenSendingNewJobs.println("Attempting Job Delegation");
+                            // Asking Slave if they are too full/too busy
                             slaveResponseWriterWhenSendingNewJobs.println("Are you full?");
+                            // Slave answers if they are full
                             slaveAisFull = Boolean.parseBoolean(slaveRequestReaderWhenSendingNewJobs.readLine());
                             System.out.println("Slave " + slaveType + " responded isFull: " + slaveBisFull);
                             if (!slaveAisFull) {
+                                // Delegating Jobs to Slave
                                 System.out.println("Delegating to Slave " + slaveType);
+                                // send over the values of clientNumber, jobId, jobType and jobStatus to Slave
                                 slaveResponseWriterWhenSendingNewJobs.println(uncompletedJobs.getFirst().getClientNumber());
                                 slaveResponseWriterWhenSendingNewJobs.println(uncompletedJobs.getFirst().getJobID());
                                 slaveResponseWriterWhenSendingNewJobs.println(uncompletedJobs.getFirst().getJobType());
@@ -141,11 +164,15 @@ public class MasterToSlaveThreads extends Thread{
                         synchronized (uncompletedJobs) {
                             System.out.println("***************");
                             slaveResponseWriterWhenSendingNewJobs.println("Attempting Job Delegation");
+                            // Asking Slave if they are too full/too busy
                             slaveResponseWriterWhenSendingNewJobs.println("Are you full?");
+                            // Slave answers if they are full
                             slaveBisFull = Boolean.parseBoolean(slaveRequestReaderWhenSendingNewJobs.readLine());
                             System.out.println("Slave " + slaveType + " responded isFull: " + slaveBisFull);
                             if (!slaveBisFull) {
+                                // Delegating Jobs to Slave
                                 System.out.println("Delegating to Slave " + slaveType);
+                                // send over the values of clientNumber, jobId, jobType and jobStatus to Slave
                                 slaveResponseWriterWhenSendingNewJobs.println(uncompletedJobs.getFirst().getClientNumber());
                                 slaveResponseWriterWhenSendingNewJobs.println(uncompletedJobs.getFirst().getJobID());
                                 slaveResponseWriterWhenSendingNewJobs.println(uncompletedJobs.getFirst().getJobType());
@@ -162,11 +189,15 @@ public class MasterToSlaveThreads extends Thread{
                         synchronized (uncompletedJobs) {
                             System.out.println("***************");
                             slaveResponseWriterWhenSendingNewJobs.println("Attempting Job Delegation");
+                            // Asking Slave if they are too full/too busy
                             slaveResponseWriterWhenSendingNewJobs.println("Are you full?");
+                            // Slave answers if they are full
                             slaveBisFull = Boolean.parseBoolean(slaveRequestReaderWhenSendingNewJobs.readLine());
                             System.out.println("Slave " + slaveType + " responded isFull: " + slaveAisFull);
                             if (!slaveAisFull) {
+                                // Delegating Jobs to Slave
                                 System.out.println("Delegating to Slave " + slaveType);
+                                // send over the values of clientNumber, jobId, jobType and jobStatus to Slave
                                 slaveResponseWriterWhenSendingNewJobs.println(uncompletedJobs.getFirst().getClientNumber());
                                 slaveResponseWriterWhenSendingNewJobs.println(uncompletedJobs.getFirst().getJobID());
                                 slaveResponseWriterWhenSendingNewJobs.println(uncompletedJobs.getFirst().getJobType());
@@ -187,7 +218,7 @@ public class MasterToSlaveThreads extends Thread{
 
 
                 try {
-                    this.sleep(100);  // puts the Thread that calls sleep, well, asleep
+                    sleep(10);  // puts the Thread that calls sleep, well, asleep
                 } catch (InterruptedException e) {  // and allows the other thread to execute
                     throw new RuntimeException(e);
                 }

@@ -1,8 +1,25 @@
+/*
+    Peter (Yosef) Ross
+    Touro ID: T00563986
+
+    Paul (Shlomo) Ross
+    Touro ID: T00564089
+
+    Joseph Guindi
+    Touro ID: T00553821
+
+    Yehoshua Dusowitz
+    Touro ID:
+
+ */
+
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
+ * Project Directions as set by the Professor:
  * There will be two different types of “slaves”, Slave-A and Slave-B. You can implement these as two
  * different Java applications or as one Java application that is set to be type A or B with a command line
  * argument. There will be two different types of “jobs”, A and B.
@@ -19,24 +36,9 @@ import java.util.ArrayList;
 
 public class SlaveB extends Thread {
 
-    // NOTE: most things that apply here also will apply for SlaveB
-    //       no need to repeat the same ideas in both.
-    /*
-        We will need to discuss if we'd rather just create two Slave Classes or use only one that will take
-        An input of sort, whether through the constructor or the command line.
-        Either manner will work.
+    // NOTE: most things that apply here also will apply for SlaveA
+    //       no need to explain the same ideas in both.
 
-        The current thought is that having two Slave classes will be easier and less clutter in code,
-        and more readable code.
-
-        Also Note:
-        We may need to add functionality according to Producer and Consumer dynamics, which probably
-        requires a "circular" array of sorts.
-
-        Mutual Exclusion MUST be implemented in the Slave Classes.
-        Most likely try to implement either Dekker's or Peterson's algorithm.
-        We may try Lamport's Bakery algorithm, but it may be harder.
-     */
 
     // variables
     static String slaveType = "B";
@@ -45,9 +47,11 @@ public class SlaveB extends Thread {
     static ArrayList<Job> completedJobs = new ArrayList<>();
 
     /*
-        We may need to create a main method, as it seems that the Slaves must tell the Master
+        We need to create a main method, as it seems that the Slaves must tell the Master
         that they have completed the task. This is because you do not want the Slaves to be sharing
-        the same terminal as the Master, as this will clutter who's saying what to whom.
+        the same terminal as the Master, as this will clutter who's saying what to whom. Plus the
+        project requires that the slaves have their own working terminal and should not be an
+        object/method that takes in a Job to process.
     */
 
     // In other words, we need to create a similar structure to how client talks to Server,
@@ -73,13 +77,17 @@ public class SlaveB extends Thread {
                 Socket slaveBIncomingSocket = new Socket(hostName, incomingPortNumber);
                 Socket slaveBOutgoingSocket = new Socket(hostName, outgoingPortNumber);
 
-                PrintWriter writeToMasterWhenReceivingNewJobs = // stream to write text requests to server
+                // stream to write text requests to server on the incoming route
+                PrintWriter writeToMasterWhenReceivingNewJobs =
                         new PrintWriter(slaveBIncomingSocket.getOutputStream(), true);
-                BufferedReader readFromMasterWhenReceivingNewJobs = // stream to read text response from server
+                // stream to read text response from server on the incoming route
+                BufferedReader readFromMasterWhenReceivingNewJobs =
                         new BufferedReader(new InputStreamReader(slaveBIncomingSocket.getInputStream()));
 
+                // stream to write text requests to server on the outgoing route
                 PrintWriter writeToMasterWhenSendingCompletedJobs =
                         new PrintWriter(slaveBOutgoingSocket.getOutputStream(), true);
+                // stream to read text response from server on the outgoing route
                 BufferedReader readFromMasterWhenSendingCompletedJobs =
                         new BufferedReader(new InputStreamReader(slaveBOutgoingSocket.getInputStream()));
         ) {
@@ -106,13 +114,19 @@ public class SlaveB extends Thread {
                     System.out.println("***************");
                 }
 
+                // Master Asks Slave if they are too busy
                 System.out.println(readFromMasterWhenReceivingNewJobs.readLine());
-                writeToMasterWhenReceivingNewJobs.println(isFull());
                 System.out.println("Master Responded: " + readFromMasterWhenReceivingNewJobs.readLine());
+                // Answering Master if Slave is full/too busy.
+                System.out.println("Answering Master isFull: " + isFull());
+                writeToMasterWhenReceivingNewJobs.println(isFull());
+                // Master is Delegating Job to Slave
+                // read in the values of clientNumber, jobId, jobType and jobStatus which Master will be sending over
                 String clientNumber = readFromMasterWhenReceivingNewJobs.readLine();
                 String jobId = readFromMasterWhenReceivingNewJobs.readLine();
                 String jobType = readFromMasterWhenReceivingNewJobs.readLine();
                 boolean jobStatus = Boolean.parseBoolean(readFromMasterWhenReceivingNewJobs.readLine());
+                // Add Job to Slave's exclusive/individual uncompleted Jobs list
                 synchronized (uncompletedJobs) {
                     uncompletedJobs.add(new Job(jobId, jobType, Integer.parseInt(clientNumber), jobStatus));
                 }
@@ -131,6 +145,13 @@ public class SlaveB extends Thread {
                 }
 
             }
+
+            try {
+                sleep(10);  // puts the Thread that calls sleep, well, asleep
+            } catch (InterruptedException e) {  // and allows the other thread to execute
+                throw new RuntimeException(e);
+            }
+
 
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host " + hostName);
@@ -161,17 +182,19 @@ public class SlaveB extends Thread {
         @Override
         public void run() {
             if (jobToPerform.getJobType().equals("B")) {
-                System.out.println("Putting to sleep for 2 seconds");
+                System.out.println("Putting  Job " + jobToPerform.getJobID() + " to sleep for 2 seconds");
                 try {
-                    super.sleep(2000);  // puts the Thread that calls sleep, well, asleep
+                    this.sleep(2000);  // puts the Thread that calls sleep, well, asleep
+                    jobToPerform.setCompleted(true);
                 } catch (InterruptedException e) {  // and allows the other thread to execute
                     throw new RuntimeException(e);
                 }
             }
             else if (jobToPerform.getJobType().equals("A")) {
-                System.out.println("Putting to sleep for 10 seconds");
+                System.out.println("Putting  Job " + jobToPerform.getJobID() + " to sleep for 10 seconds");
                 try {
-                    super.sleep(10000);  // puts the Thread that calls sleep, well, asleep
+                    this.sleep(10000);  // puts the Thread that calls sleep, well, asleep
+                    jobToPerform.setCompleted(true);
                 } catch (InterruptedException e) {  // and allows the other thread to execute
                     throw new RuntimeException(e);
                 }
