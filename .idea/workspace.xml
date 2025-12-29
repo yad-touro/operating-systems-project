@@ -4,25 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c4846534-b741-48bd-9604-76e3358edad6" name="Changes" comment="Added a Job Class&#10;Edited some code of the communication between Master and Client(s).&#10;Added an ArrayList which Client(s) and Master share&#10;Added a while-loop (commented out) in Master">
-      <change afterPath="$PROJECT_DIR$/src/MasterToClientThreads.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/MasterToSlaveThreads.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/SlaveToMasterThreads.java" afterDir="false" />
+    <list default="true" id="c4846534-b741-48bd-9604-76e3358edad6" name="Changes" comment="Added Threads so that Slaves are able to take in new jobs and tell Master that jobs have been performed, silmutaneously. &#10;The only thing left to do is the final step of telling Clients that Jobs are done. This is quite difficult.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/Client.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/Master$Job.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/Master.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/Master.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/MasterClientThreads.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/MasterSlaveThreads.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/SlaveA.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/SlaveA.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/SlaveB.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/SlaveB.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Job.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Job.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Master.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Master.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MasterClientThreads.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientToMasterThreads.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MasterSlaveThreads.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SlaveA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SlaveA.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SlaveB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SlaveB.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -205,7 +188,23 @@
       <option name="project" value="LOCAL" />
       <updated>1765949457672</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Added Threads so that Slaves are able to take in new jobs and tell Master that jobs have been performed, silmutaneously. &#10;The only thing left to do is the final step of telling Clients that Jobs are done. This is quite difficult.">
+      <option name="closed" value="true" />
+      <created>1766998887190</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1766998887190</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Added Threads so that Slaves are able to take in new jobs and tell Master that jobs have been performed, silmutaneously. &#10;The only thing left to do is the final step of telling Clients that Jobs are done. This is quite difficult.">
+      <option name="closed" value="true" />
+      <created>1767030859659</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1767030859659</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -219,7 +218,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="basicClientMasterSlaveProtocols" />
+                        <option value="origin/basicClientMasterSlaveProtocols" />
                       </list>
                     </value>
                   </entry>
@@ -234,7 +233,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Performed a big part of the boiler plate when it comes to server and sockets. We must speak about threading and the many algorithms that are needed and can be used." />
     <MESSAGE value="Added a Job Class&#10;Edited some code of the communication between Master and Client(s).&#10;Added an ArrayList which Client(s) and Master share&#10;Added a while-loop (commented out) in Master" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added a Job Class&#10;Edited some code of the communication between Master and Client(s).&#10;Added an ArrayList which Client(s) and Master share&#10;Added a while-loop (commented out) in Master" />
+    <MESSAGE value="Added Threads so that Slaves are able to take in new jobs and tell Master that jobs have been performed, silmutaneously. &#10;The only thing left to do is the final step of telling Clients that Jobs are done. This is quite difficult." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Threads so that Slaves are able to take in new jobs and tell Master that jobs have been performed, silmutaneously. &#10;The only thing left to do is the final step of telling Clients that Jobs are done. This is quite difficult." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
