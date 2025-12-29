@@ -29,16 +29,13 @@ public class MasterClientThreads extends Thread{
     private String currentJobID;
     private String currentJobType;
     ArrayList<Job> jobList;
-    ArrayList<PrintWriter> clientWriters;
 
     // constructor
-    public MasterClientThreads(ServerSocket serverSocket, int id, String threadName, 
-                               ArrayList<Job> jobList, ArrayList<PrintWriter> clientWriters) {
+    public MasterClientThreads(ServerSocket serverSocket, int id, String threadName, ArrayList<Job> jobList) {
         this.serverSocket = serverSocket;
         this.threadId = id;
         this.threadName = threadName;
         this.jobList = jobList;
-        this.clientWriters = clientWriters;
     }
 
     @Override
@@ -55,49 +52,31 @@ public class MasterClientThreads extends Thread{
              PrintWriter clientResponseWriter = new PrintWriter(clientSocket.getOutputStream(), true);
              BufferedReader clientRequestReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
 
-            // Store client PrintWriter for notifications
-            synchronized (clientWriters) {
-                while (clientWriters.size() <= threadId) {
-                    clientWriters.add(null);
-                }
-                clientWriters.set(threadId, clientResponseWriter);
-            }
-            
-            System.out.println("Master: Client " + threadId + " connected");
 
             String requestString = "default String";
 
+
             do {
-                System.out.println("Master: Waiting for job from Client " + threadId);
+
+                System.out.println(requestString + " received by listener: " + this.threadId + " " + this.threadName);
                 clientResponseWriter.println("Hello " + this.threadName);
 
                 clientResponseWriter.println("Job ID: ");
                 currentJobID = clientRequestReader.readLine();
-                System.out.println("Master: Received Job ID: " + currentJobID + " from Client " + threadId);
+                System.out.println(currentJobID + " received");
 
                 clientResponseWriter.println("Job Type (A or B): ");
                 currentJobType = clientRequestReader.readLine();
-                System.out.println("Master: Received Job Type: " + currentJobType + " from Client " + threadId);
+                System.out.println(currentJobType + " received");
 
-                // Add job to queue with synchronization
-                synchronized (jobList) {
-                    Job newJob = new Job(currentJobID, currentJobType, threadId);
-                    jobList.add(newJob);
-                    System.out.println("Master: Added job " + currentJobType + ":" + currentJobID + 
-                                     " to job queue (from Client " + threadId + ")");
-                }
+                jobList.add(new Job(currentJobID, currentJobType, threadId));
 
-                System.out.println("Master: Job " + currentJobType + ":" + currentJobID + " queued for dispatch");
-                clientResponseWriter.println("Dispatching Job... Enter \"exit\" to exit from Program");
+                System.out.println("Dispatching...");
+                clientResponseWriter.println("Dispatching Job... Enter \"exit\" to exit from Progam");
 
-                // Read response from client (could be "exit" or anything to continue)
-                requestString = clientRequestReader.readLine();
-                if (requestString == null || requestString.equals("exit")) {
-                    break;
-                }
-                // If not "exit", continue loop to accept another job
 
-            } while(true);
+
+            } while(!(requestString.equals("exit")));
 
             if (requestString.equals("exit")) {
                 System.out.println("Client responds: " + requestString
