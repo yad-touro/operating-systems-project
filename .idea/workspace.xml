@@ -4,17 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c4846534-b741-48bd-9604-76e3358edad6" name="Changes" comment="Finalized the Master telling Clients their Jobs are have been completed.&#10;With this, the Project is officially complete.">
+    <list default="true" id="c4846534-b741-48bd-9604-76e3358edad6" name="Changes" comment="Finalized and fixed the delegation problem.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/Client.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/Master.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/Master.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/MasterToSlaveThreads.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/MasterToSlaveThreads.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/SlaveA$doJob.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/SlaveA$doJob.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/SlaveA.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/SlaveA.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/SlaveB$doJob.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/SlaveB$doJob.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/SlaveB.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/SlaveB.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/SlaveToMasterThreads.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/SlaveToMasterThreads.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MasterToSlaveThreads.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MasterToSlaveThreads.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SlaveA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SlaveA.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SlaveB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SlaveB.java" afterDir="false" />
     </list>
@@ -231,7 +227,23 @@
       <option name="project" value="LOCAL" />
       <updated>1767050546382</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Finalized and fixed the delegation problem.">
+      <option name="closed" value="true" />
+      <created>1767140994023</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1767140994023</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Finalized and fixed the delegation problem.">
+      <option name="closed" value="true" />
+      <created>1767141217922</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1767141217922</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -262,6 +274,7 @@
     <MESSAGE value="Added a Job Class&#10;Edited some code of the communication between Master and Client(s).&#10;Added an ArrayList which Client(s) and Master share&#10;Added a while-loop (commented out) in Master" />
     <MESSAGE value="Added Threads so that Slaves are able to take in new jobs and tell Master that jobs have been performed, silmutaneously. &#10;The only thing left to do is the final step of telling Clients that Jobs are done. This is quite difficult." />
     <MESSAGE value="Finalized the Master telling Clients their Jobs are have been completed.&#10;With this, the Project is officially complete." />
-    <option name="LAST_COMMIT_MESSAGE" value="Finalized the Master telling Clients their Jobs are have been completed.&#10;With this, the Project is officially complete." />
+    <MESSAGE value="Finalized and fixed the delegation problem." />
+    <option name="LAST_COMMIT_MESSAGE" value="Finalized and fixed the delegation problem." />
   </component>
 </project>
