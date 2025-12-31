@@ -5,12 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c4846534-b741-48bd-9604-76e3358edad6" name="Changes" comment="Finalized and fixed the delegation problem.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/MasterToSlaveThreads.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/MasterToSlaveThreads.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/SlaveA$doJob.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/SlaveA$doJob.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/SlaveA.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/SlaveA.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/SlaveB$doJob.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/SlaveB$doJob.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/SlaveB.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/SlaveB.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SlaveA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SlaveA.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SlaveB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SlaveB.java" afterDir="false" />
     </list>
@@ -54,12 +48,22 @@
     &quot;assignee&quot;: &quot;yosefross&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/yad-touro/operating-systems-project.git&quot;,
-    &quot;accountId&quot;: &quot;5c5f21ee-9ea8-443d-8edf-cf168fe2056c&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/yad-touro/operating-systems-project.git",
+    "accountId": "5c5f21ee-9ea8-443d-8edf-cf168fe2056c"
+  },
+  "recentNewPullRequestHead": {
+    "server": {
+      "useHttp": false,
+      "host": "github.com",
+      "port": null,
+      "suffix": null
+    },
+    "owner": "yad-touro",
+    "repository": "operating-systems-project"
   }
-}</component>
+}]]></component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -72,21 +76,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Client.executor&quot;: &quot;Debug&quot;,
-    &quot;Application.Master.executor&quot;: &quot;Debug&quot;,
-    &quot;Application.SlaveA.executor&quot;: &quot;Debug&quot;,
-    &quot;Application.SlaveB.executor&quot;: &quot;Debug&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;basicClientMasterSlaveProtocols&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Ross/IdeaProjects/MCOO243_SemesterProject&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Client.executor": "Debug",
+    "Application.Master.executor": "Debug",
+    "Application.SlaveA.executor": "Debug",
+    "Application.SlaveB.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "#6 on basicClientMasterSlaveProtocols",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Ross/IdeaProjects/MCOO243_SemesterProject",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Ross\IdeaProjects\MCOO243_SemesterProject\src" />
@@ -243,7 +247,15 @@
       <option name="project" value="LOCAL" />
       <updated>1767141217922</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Finalized and fixed the delegation problem.">
+      <option name="closed" value="true" />
+      <created>1767144311871</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1767144311871</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
