@@ -41,7 +41,7 @@ public class SlaveB extends Thread {
 
     // variables
     static String slaveType = "B";
-    static final int MAX_JOBS = 4;// This will be used to check if the Slave is full or not
+    static final int MAX_JOBS = 1;// This will be used to check if the Slave is full or not
     static ArrayList<Job> uncompletedJobs = new ArrayList<>();
     static ArrayList<Job> completedJobs = new ArrayList<>();
 
@@ -185,11 +185,14 @@ public class SlaveB extends Thread {
                 System.out.println("Putting  Job " + uncompletedJobs.getFirst().getJobID() + " to sleep for 2 seconds");
                 try {
                     this.sleep(2000);  // puts the Thread that calls sleep, well, asleep
-                    synchronized (completedJobs) {
-                        uncompletedJobs.getFirst().setCompleted(true);
-                        System.out.println("Adding to Completed Job List.");
-                        this.completedJobs.add(uncompletedJobs.getFirst());  // once the is helper thread is done, add Job to a completed list.
-                        uncompletedJobs.removeFirst();
+                    synchronized (uncompletedJobs) {
+                        synchronized (completedJobs) {
+                            uncompletedJobs.getFirst().setCompleted(true);
+                            System.out.println("Adding to Completed Job List.");
+                            this.completedJobs.add(uncompletedJobs.getFirst());  // once the is helper thread is done, add Job to a completed list.
+                            uncompletedJobs.removeFirst();
+                        }
+
                     }
 
 
