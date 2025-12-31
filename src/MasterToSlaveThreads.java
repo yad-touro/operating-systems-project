@@ -193,8 +193,8 @@ public class MasterToSlaveThreads extends Thread{
                             slaveResponseWriterWhenSendingNewJobs.println("Are you full?");
                             // Slave answers if they are full
                             slaveBisFull = Boolean.parseBoolean(slaveRequestReaderWhenSendingNewJobs.readLine());
-                            System.out.println("Slave " + slaveType + " responded isFull: " + slaveAisFull);
-                            if (!slaveAisFull) {
+                            System.out.println("Slave " + slaveType + " responded isFull: " + slaveBisFull);
+                            if (!slaveBisFull) {
                                 // Delegating Jobs to Slave
                                 System.out.println("Delegating to Slave " + slaveType);
                                 // send over the values of clientNumber, jobId, jobType and jobStatus to Slave

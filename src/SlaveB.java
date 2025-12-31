@@ -16,7 +16,6 @@
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Project Directions as set by the Professor:
@@ -42,7 +41,7 @@ public class SlaveB extends Thread {
 
     // variables
     static String slaveType = "B";
-    static final int MAX_JOBS = 6;// This will be used to check if the Slave is full or not
+    static final int MAX_JOBS = 4;// This will be used to check if the Slave is full or not
     static ArrayList<Job> uncompletedJobs = new ArrayList<>();
     static ArrayList<Job> completedJobs = new ArrayList<>();
 
@@ -120,26 +119,28 @@ public class SlaveB extends Thread {
                 // Answering Master if Slave is full/too busy.
                 System.out.println("Answering Master isFull: " + isFull());
                 writeToMasterWhenReceivingNewJobs.println(isFull());
-                // Master is Delegating Job to Slave
-                // read in the values of clientNumber, jobId, jobType and jobStatus which Master will be sending over
-                String clientNumber = readFromMasterWhenReceivingNewJobs.readLine();
-                String jobId = readFromMasterWhenReceivingNewJobs.readLine();
-                String jobType = readFromMasterWhenReceivingNewJobs.readLine();
-                boolean jobStatus = Boolean.parseBoolean(readFromMasterWhenReceivingNewJobs.readLine());
-                // Add Job to Slave's exclusive/individual uncompleted Jobs list
-                synchronized (uncompletedJobs) {
-                    uncompletedJobs.add(new Job(jobId, jobType, Integer.parseInt(clientNumber), jobStatus));
-                }
-                System.out.println("Job " + jobId + " accepted and entered queue to be processed");
-
-
-                while (!uncompletedJobs.isEmpty()) {
-                    // simulate "work"
-                    doJob doJob = new doJob(uncompletedJobs.getFirst(), completedJobs);
-
+                if(!isFull()) {
+                    // Master is Delegating Job to Slave
+                    // read in the values of clientNumber, jobId, jobType and jobStatus which Master will be sending over
+                    String clientNumber = readFromMasterWhenReceivingNewJobs.readLine();
+                    String jobId = readFromMasterWhenReceivingNewJobs.readLine();
+                    String jobType = readFromMasterWhenReceivingNewJobs.readLine();
+                    boolean jobStatus = Boolean.parseBoolean(readFromMasterWhenReceivingNewJobs.readLine());
+                    // Add Job to Slave's exclusive/individual uncompleted Jobs list
                     synchronized (uncompletedJobs) {
-                        uncompletedJobs.removeFirst();
+                        uncompletedJobs.add(new Job(jobId, jobType, Integer.parseInt(clientNumber), jobStatus));
                     }
+                    System.out.println("Job " + jobId + " accepted and entered queue to be processed");
+                } else {
+                    System.out.println("System is too busy...");
+                }
+
+
+
+                if (!uncompletedJobs.isEmpty()) {
+                    // simulate "work"
+                    doJob doJob = new doJob(uncompletedJobs, completedJobs);
+
                     doJob.start();
 
                 }
@@ -166,44 +167,64 @@ public class SlaveB extends Thread {
 
 
     public static boolean isFull() {
-        return uncompletedJobs.size() == MAX_JOBS;
+        return uncompletedJobs.size() >= MAX_JOBS;
     }
 
     private static class doJob extends Thread {
-        Job jobToPerform;
+        ArrayList<Job> uncompletedJobs;
         ArrayList<Job> completedJobs;
 
         // constructor
-        public doJob(Job jobToPerform, ArrayList<Job> completedJobs) {
-            this.jobToPerform = jobToPerform;
+        public doJob(ArrayList<Job> jobToPerform, ArrayList<Job> completedJobs) {
+            this.uncompletedJobs = jobToPerform;
             this.completedJobs = completedJobs;
         }
 
         @Override
         public void run() {
-            if (jobToPerform.getJobType().equals("B")) {
-                System.out.println("Putting  Job " + jobToPerform.getJobID() + " to sleep for 2 seconds");
+            if (uncompletedJobs.getFirst().getJobType().equals("B")) {
+                System.out.println("Putting  Job " + uncompletedJobs.getFirst().getJobID() + " to sleep for 2 seconds");
                 try {
                     this.sleep(2000);  // puts the Thread that calls sleep, well, asleep
-                    jobToPerform.setCompleted(true);
+                    synchronized (completedJobs) {
+                        uncompletedJobs.getFirst().setCompleted(true);
+                        System.out.println("Adding to Completed Job List.");
+                        this.completedJobs.add(uncompletedJobs.getFirst());  // once the is helper thread is done, add Job to a completed list.
+                        uncompletedJobs.removeFirst();
+                    }
+
+
                 } catch (InterruptedException e) {  // and allows the other thread to execute
                     throw new RuntimeException(e);
                 }
             }
-            else if (jobToPerform.getJobType().equals("A")) {
-                System.out.println("Putting  Job " + jobToPerform.getJobID() + " to sleep for 10 seconds");
+            else if (uncompletedJobs.getFirst().getJobType().equals("A")) {
+                System.out.println("Putting  Job " + uncompletedJobs.getFirst().getJobID() + " to sleep for 10 seconds");
                 try {
                     this.sleep(10000);  // puts the Thread that calls sleep, well, asleep
-                    jobToPerform.setCompleted(true);
+                    synchronized (uncompletedJobs) {
+                        synchronized (completedJobs) {
+                            uncompletedJobs.getFirst().setCompleted(true);
+                            System.out.println("Adding to Completed Job List.");
+                            this.completedJobs.add(uncompletedJobs.getFirst());  // once the is helper thread is done, add Job to a completed list.
+                            uncompletedJobs.removeFirst();
+                        }
+
+                    }
+
+
                 } catch (InterruptedException e) {  // and allows the other thread to execute
                     throw new RuntimeException(e);
                 }
             }
 
-            synchronized (completedJobs) {
-                System.out.println("Adding to Completed Job List.");
-                this.completedJobs.add(jobToPerform);  // once the is helper thread is done, add Job to a completed list.
-            }
+//            synchronized (completedJobs) {
+//                System.out.println("Adding to Completed Job List.");
+//                this.completedJobs.add(uncompletedJobs.getFirst());  // once the is helper thread is done, add Job to a completed list.
+//            }
+//            synchronized (SlaveB.uncompletedJobs) {
+//                uncompletedJobs.removeFirst();
+//            }
 
         }
     }  // end of private class doJob
