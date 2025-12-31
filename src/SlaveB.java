@@ -41,7 +41,7 @@ public class SlaveB extends Thread {
 
     // variables
     static String slaveType = "B";
-    static final int MAX_JOBS = 1;// This will be used to check if the Slave is full or not
+    static final int MAX_JOBS = 4;// This will be used to check if the Slave is full or not
     static ArrayList<Job> uncompletedJobs = new ArrayList<>();
     static ArrayList<Job> completedJobs = new ArrayList<>();
 
