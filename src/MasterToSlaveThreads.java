@@ -212,10 +212,7 @@ public class MasterToSlaveThreads extends Thread{
                         }
                     }
 
-
-
                 }
-
 
                 try {
                     sleep(10);  // puts the Thread that calls sleep, well, asleep

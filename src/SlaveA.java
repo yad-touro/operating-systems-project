@@ -134,8 +134,6 @@ public class SlaveA extends Thread{
                 }
 
 
-
-
                 if (!uncompletedJobs.isEmpty()) {
                     // simulate "work"
                     doJob doJob = new doJob(uncompletedJobs, completedJobs);
@@ -211,15 +209,6 @@ public class SlaveA extends Thread{
                     throw new RuntimeException(e);
                 }
             }
-
-//            synchronized (completedJobs) {
-//                System.out.println("Adding to Completed Job List.");
-//                this.completedJobs.add(uncompletedJobs.getFirst());  // once the is helper thread is done, add Job to a completed list.
-//            }
-//
-//            synchronized (SlaveA.uncompletedJobs) {
-//                SlaveA.uncompletedJobs.removeFirst();
-//            }
 
         }
     }  // end of private class doJob
