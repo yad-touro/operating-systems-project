@@ -1,17 +1,3 @@
-/*
-    Peter (Yosef) Ross
-    Touro ID: T00563986
-
-    Paul (Shlomo) Ross
-    Touro ID: T00564089
-
-    Joseph Guindi
-    Touro ID: T00553821
-
-    Yehoshua Dusowitz
-    Touro ID:
-
- */
 
 /*
     This class is used in order to send Jobs that are waiting to be processed from

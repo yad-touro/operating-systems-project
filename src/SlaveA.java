@@ -1,17 +1,3 @@
-/*
-    Peter (Yosef) Ross
-    Touro ID: T00563986
-
-    Paul (Shlomo) Ross
-    Touro ID: T00564089
-
-    Joseph Guindi
-    Touro ID: T00553821
-
-    Yehoshua Dusowitz
-    Touro ID:
-
- */
 
 import java.io.*;
 import java.net.*;
